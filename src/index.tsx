@@ -6,6 +6,10 @@ import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Login } from './pages/Login';
 import { ErrorPage } from './pages/ErrorPage';
+import { MainPage } from './pages/MainPage';
+import { Statistics } from  './pages/Statistics';
+import { Settings } from './pages/Settings'; 
+import 'bootstrap/dist/css/bootstrap.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -20,6 +24,21 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/statistics",
+    element: <Statistics />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/main",
+    element: <MainPage />,
     errorElement: <ErrorPage />,
   },
   {
