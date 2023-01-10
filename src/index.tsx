@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Login } from './pages/Login';
+import { ErrorPage } from './pages/ErrorPage';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -14,11 +15,18 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <ErrorPage />,
   },
   {
     path: "/login",
     element: <Login />,
+    errorElement: <ErrorPage />,
   },
+  {
+    path: "*",
+    element: <ErrorPage />,
+    errorElement: <ErrorPage />
+  }
 ]);
 
 root.render(
