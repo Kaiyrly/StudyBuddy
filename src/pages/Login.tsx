@@ -1,7 +1,10 @@
 import React from 'react'
+import '../App.css'
 
 export const Login: React.FC = () => {
   return (
-    <div>Login</div>
+    <div className='App App-header'>
+      Login Page
+    </div>
   )
 }
