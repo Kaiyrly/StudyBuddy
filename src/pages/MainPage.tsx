@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useState } from 'react'
+import React, { MouseEventHandler, ReactNode, useState } from 'react'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -8,12 +8,27 @@ import '../App.css'
 import { getOriginalNode } from 'typescript';
 
 export const MainPage: React.FC = () => {
-    const [goals, setGoals] = useState<string[]>([]);
+    const [goals, setGoals] = useState<string[]>(["wiojeoijsdf", "slkdjflksdj"]);
 
     const newGoal = (event: React.MouseEvent<HTMLButtonElement>) => {
         setGoals(oldList => [...oldList, "gooaallallal"])
         console.log(goals)
     }
+
+    const displayGoals = goals.map((goal) => {
+        return (
+            <Card style={{ width: '18rem' }}>
+                        <Card.Img variant="top" src="holder.js/100px180" />
+                        <Card.Body>
+                        <Card.Title>{goal}</Card.Title>
+                        <Card.Text>
+                            Some description for the goal which is not ready
+                        </Card.Text>
+                        <Button variant="primary">Go somewhere</Button>
+                        </Card.Body>
+            </Card>
+        )
+    })
 
     return (
         <>
@@ -30,18 +45,7 @@ export const MainPage: React.FC = () => {
             <Button variant="primary" size="lg" onClick={newGoal}>
                 Add a goal
             </Button>{' '}
-            {goals.map((goal) => {
-                <Card style={{ width: '18rem' }}>
-                    <Card.Img variant="top" src="holder.js/100px180" />
-                    <Card.Body>
-                    <Card.Title>{goal}</Card.Title>
-                    <Card.Text>
-                        Some description for the goal which is not ready
-                    </Card.Text>
-                    <Button variant="primary">Go somewhere</Button>
-                    </Card.Body>
-                </Card>
-            })}
+            {displayGoals}
         </>
       )
 }
