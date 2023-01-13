@@ -17,6 +17,7 @@ export const MainPage: React.FC = () => {
 
     const displayGoals = goals.map((goal) => {
         return (
+            // TODO: move this into its own component
             <Card style={{ width: '18rem' }}>
                         <Card.Img variant="top" src="holder.js/100px180" />
                         <Card.Body>
@@ -32,6 +33,7 @@ export const MainPage: React.FC = () => {
 
     return (
         <>
+            // TODO: move navbar into its own component, so that it will be reusable
             <Navbar bg="light" variant="light">
                 <Container>
                 <Navbar.Brand href="/main">Navbar</Navbar.Brand>
