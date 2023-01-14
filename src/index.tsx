@@ -10,6 +10,7 @@ import { MainPage } from './pages/MainPage';
 import { Statistics } from  './pages/Statistics';
 import { Settings } from './pages/Settings'; 
 import 'bootstrap/dist/css/bootstrap.css';
+import { NavBar } from './components/NavBar';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -50,6 +51,7 @@ const router = createBrowserRouter([
 
 root.render(
   <React.StrictMode>
+    <NavBar />
     <RouterProvider router={router} />
   </React.StrictMode>
 );

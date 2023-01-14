@@ -14,7 +14,6 @@ export const MainPage: React.FC = () => {
 
     return (
         <>
-            <NavBar/>
             <Button variant="primary" size="lg" onClick={newGoal}>
                 Add a goal
             </Button>{' '}
