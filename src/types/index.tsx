@@ -1,5 +1,5 @@
-export interface Goal {
+export interface IGoal {
   name: string
-  id: number
-  
+  id: string
+
 }

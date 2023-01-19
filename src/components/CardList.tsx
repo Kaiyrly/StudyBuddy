@@ -1,16 +1,17 @@
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import '../App.css'
+import { IGoal } from '../types';
 
-export const CardList = (goals: string[]) => {
+export const CardList = (goals: IGoal[]) => {
 
-    const displayCards = goals.map((goal, i) => {
+    const displayCards = goals.map(( goal ) => {
         return (
             // TODO: move this into its own component
-            <Card key={i} style={{ width: '18rem' }}>
+            <Card key={goal.id} style={{ width: '18rem' }}>
                         <Card.Img variant="top" src="holder.js/100px180" />
                         <Card.Body>
-                        <Card.Title>{goal}</Card.Title>
+                        <Card.Title>{goal.name}</Card.Title>
                         <Card.Text>
                             Some description for the goal which is not ready
                         </Card.Text>

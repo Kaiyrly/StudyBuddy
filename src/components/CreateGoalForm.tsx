@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
-import { Goal } from '../types'
+import { IGoal } from '../types'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import { randomIdGenerator } from '../utils';
 
-export const CreateGoalForm: React.FC = () => {
-  const [goal, setGoal] = useState<Goal>({name: "", id: 123})
+export const CreateGoalForm: React.FC<{createHandler?: (goal: IGoal) => void}> = ({createHandler}) => {
+  const [goal, setGoal] = useState<IGoal>({name: "", id: randomIdGenerator()})
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(goal)
+    createHandler?.(goal)
   }
   return (
     <Form onSubmit={submitHandler}>

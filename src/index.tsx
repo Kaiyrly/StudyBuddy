@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
 import { Login } from './pages/Login';
 import { ErrorPage } from './pages/ErrorPage';
 import { MainPage } from './pages/MainPage';
@@ -52,7 +53,9 @@ const router = createBrowserRouter([
 root.render(
   <React.StrictMode>
     <NavBar />
-    <RouterProvider router={router} />
+    <Container>
+      <RouterProvider router={router} />
+    </Container>
   </React.StrictMode>
 );
 
