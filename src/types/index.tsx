@@ -3,3 +3,10 @@ export interface IGoal {
   id: string
 
 }
+
+export interface ITask {
+  name: string
+  goalId: string
+  id: string
+  
+}

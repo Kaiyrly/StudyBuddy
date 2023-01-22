@@ -1,9 +1,15 @@
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import { useNavigate } from "react-router-dom";
 import '../App.css'
 import { IGoal } from '../types';
 
 export const CardList = (goals: IGoal[]) => {
+    const navigate = useNavigate()
+
+    const goToGoal = (goalId: String) => {
+        navigate("/goals/" + goalId)
+    }
 
     const displayCards = goals.map(( goal ) => {
         return (
@@ -15,7 +21,9 @@ export const CardList = (goals: IGoal[]) => {
                         <Card.Text>
                             Some description for the goal which is not ready
                         </Card.Text>
-                        <Button variant="primary">Go somewhere</Button>
+                        <Button variant="primary" onClick={() => goToGoal(goal.id)}>
+                                Go to Goal
+                        </Button>
                         </Card.Body>
             </Card>
         )

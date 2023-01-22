@@ -8,6 +8,7 @@ import Container from 'react-bootstrap/Container';
 import { Login } from './pages/Login';
 import { ErrorPage } from './pages/ErrorPage';
 import { MainPage } from './pages/MainPage';
+import { GoalPage } from './pages/GoalPage';
 import { Statistics } from  './pages/Statistics';
 import { Settings } from './pages/Settings'; 
 import 'bootstrap/dist/css/bootstrap.css';
@@ -21,6 +22,11 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/goals",
+    element: <GoalPage />,
     errorElement: <ErrorPage />,
   },
   {
@@ -41,6 +47,11 @@ const router = createBrowserRouter([
   {
     path: "/main",
     element: <MainPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/goals/:id",
+    element: <GoalPage/>,
     errorElement: <ErrorPage />,
   },
   {
