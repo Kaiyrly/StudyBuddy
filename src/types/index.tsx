@@ -10,15 +10,16 @@ export interface IGoal {
 
 export interface ITask {
   name: string
-  type: string // = NUMBER_TYPE | TODO_TYPE | BOOLEAN_TYPE
   value: IToDoList | INumberType
   goalId: string
   id: string
 }
 
-export interface IToDoList {
-  type: string
+export class IToDoList {
   value: IToDo[]
+  constructor(value: IToDo[]) {
+    this.value = value
+  }
 }
 
 export interface IToDo {
@@ -26,11 +27,17 @@ export interface IToDo {
   value: boolean
 }
 
-export interface INumberType {
-  type: string
+export class INumberType {
   name: string
   value: boolean
   initialValue: number
   currentValue: number
   targetValue: number
+  constructor(name: string, value: boolean, initialValue: number, currentValue: number, targetValue: number) {
+    this.name = name
+    this.value = value
+    this.initialValue = initialValue
+    this.currentValue = currentValue
+    this.targetValue = targetValue
+  }
 }
