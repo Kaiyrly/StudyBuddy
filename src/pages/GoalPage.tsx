@@ -8,33 +8,48 @@ import { NumberTypeView } from '../components/NumberTypeView';
 import ToDoTypeView from '../components/ToDoTypeView';
 import { randomIdGenerator } from '../utils';
 import { useParams } from 'react-router-dom';
+import { NumberTypeSample, ToDoListSample } from '../samples';
+
+const TaskModal: React.FC<{item: ITask}> = ({item}) => {
+    const [showModal, setShowModal] = useState(false)
+
+    if(item.value instanceof IToDoList){
+        return (
+            <>
+                {showModal && <ModalComponent setShowModal={setShowModal}>
+                    <ToDoTypeView todos={item.value.value}/>
+                </ModalComponent>}
+                <a className="list-group-item list-group-item-action flex-column align-items-start">
+                    <p className="mb-1">{item.name}</p>
+                    <Button variant="primary" size="lg" onClick={() => setShowModal(true)}>Show task</Button>{' '}
+                </a>
+            </>
+        )
+    }
+    if(item.value instanceof INumberType){
+        return (
+            <>
+                {showModal && <ModalComponent setShowModal={setShowModal}>
+                    <NumberTypeView number={item.value}/>
+                </ModalComponent>}
+                <a className="list-group-item list-group-item-action flex-column align-items-start">
+                    <p className="mb-1">{item.name}</p>
+                    <Button variant="primary" size="lg" onClick={() => setShowModal(true)}>Show task</Button>{' '}
+                </a>
+            </>
+        )
+    }
+    return <>default view</>;
+}
 
 const DisplayTaskList: React.FC<{taskList: ITask[]}> = ({taskList}) => {
     const [showModal, setShowModal] = useState(false)
-
-    const renderSwitch = (item: ITask) => {
-        if(item.value instanceof IToDoList){
-            return <ToDoTypeView todos={item.value.value}/>;
-        }
-        if(item.value instanceof INumberType){
-            return <NumberTypeView number={item.value}/>
-        }
-        return "as;ldkf";
-    }
 
     return (
         <div className="list-group">
             {taskList.map((item, i) => (
                 <div key={i}>
-                    {showModal && 
-                        <ModalComponent setShowModal={setShowModal}>
-                            {renderSwitch(item)}                      
-                        </ModalComponent>
-                    }
-                    <a className="list-group-item list-group-item-action flex-column align-items-start">
-                        <p className="mb-1">{item.name}</p>
-                        <Button variant="primary" size="lg" onClick={() => setShowModal(true)}>Show task</Button>{' '}
-                    </a>
+                    <TaskModal item={item}/>
                 </div>
              ))}
         </div>
@@ -44,7 +59,10 @@ const DisplayTaskList: React.FC<{taskList: ITask[]}> = ({taskList}) => {
 
 export const GoalPage: React.FC = (id) => {
     const params = useParams()
-    const [tasks, setTasks] = useState<ITask[]>([{name: "Demo Task Name", id: randomIdGenerator(), goalId: randomIdGenerator(), value: new INumberType('asd', false, 0, 5, 10)}, {name: "New Task Name", id: randomIdGenerator(), goalId: randomIdGenerator(), value: new INumberType('aasdfsd', false, 0, 50, 100)}]);
+    const [tasks, setTasks] = useState<ITask[]>([
+        {name: "Demo Task Name", id: randomIdGenerator(), goalId: randomIdGenerator(), value: NumberTypeSample},
+        {name: "New Task Name", id: randomIdGenerator(), goalId: randomIdGenerator(), value: ToDoListSample}
+    ]);
     const [showModal, setShowModal] = useState(false)
 
     const newTask = (task: ITask) => {

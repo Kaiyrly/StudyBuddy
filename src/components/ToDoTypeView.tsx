@@ -1,23 +1,29 @@
-import React from 'react'
-import { ListGroup } from 'react-bootstrap';
+import React, { useState } from 'react'
+import { ListGroup, ToggleButton } from 'react-bootstrap';
 import { IToDo } from '../types'
 
-const ToDoTypeView: React.FC<{todos: IToDo[]}> = ({todos}) => {
-  const alertClicked = () => {
-    alert('You clicked the third ListGroupItem');
-  }
+const SingleToDo: React.FC<{todoItem: IToDo, index: number}> = ({todoItem, index}) => {
+  const [todo, setTodo] = useState<IToDo>(todoItem)
 
   return (
+    <ListGroup.Item onClick = {() => setTodo({...todo, value: !todo.value})} key={index} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+      {String(index + 1) + '. ' + todo.name}
+      <ToggleButton
+        variant={todo.value ? 'outline-success' : 'outline-primary'}
+        value={1}
+        size="sm"
+        style={{marginRight: 0}}
+      >
+        {todo.value ? 'Done' : 'In process'}
+      </ToggleButton>
+    </ListGroup.Item>
+  )
+}
+
+const ToDoTypeView: React.FC<{todos: IToDo[]}> = ({todos}) => {
+  return (
     <ListGroup defaultActiveKey="#link1">
-      <ListGroup.Item action href="#link1">
-        Link 1
-      </ListGroup.Item>
-      <ListGroup.Item action href="#link2" disabled>
-        Link 2
-      </ListGroup.Item>
-      <ListGroup.Item action onClick={alertClicked}>
-        This one is a button
-      </ListGroup.Item>
+      {todos.map((todoItem, index) => SingleToDo({todoItem, index}))}
     </ListGroup>
   )
 }

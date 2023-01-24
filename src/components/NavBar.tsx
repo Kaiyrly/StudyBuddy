@@ -6,7 +6,7 @@ import Navbar from 'react-bootstrap/Navbar';
 export const NavBar: React.FC = () => {
     return (
         <Navbar bg="light" variant="light">
-                <Container>
+            <Container>
                 <Navbar.Brand href="/main">Navbar</Navbar.Brand>
                 <Nav className="me-auto">
                     <Nav.Link href="/main">Main</Nav.Link>
@@ -14,7 +14,7 @@ export const NavBar: React.FC = () => {
                     <Nav.Link href="/settings">Settings</Nav.Link>
                 </Nav>
                 <Button variant="outline-primary" href='/login'>Login</Button>
-                </Container>
+            </Container>
         </Navbar>
     )
 }
