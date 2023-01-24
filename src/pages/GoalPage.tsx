@@ -9,11 +9,13 @@ import { useParams } from 'react-router-dom';
 
 const DisplayTaskList: React.FC<{taskList: ITask[]}> = ({taskList}) => {
     return (
-        <ul>
-        {taskList.map(item => (
-            <li key={item.id}>{item.name}</li>
-        ))}
-        </ul>
+        <div className="list-group">
+            {taskList.map(item => (
+                <a href={item.id} className="list-group-item list-group-item-action flex-column align-items-start">
+                    <p className="mb-1">{item.name}</p>
+                </a>
+             ))}
+        </div>
     )
 }
 
