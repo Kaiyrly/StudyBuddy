@@ -1,8 +1,8 @@
 import React from 'react'
 import { ListGroup } from 'react-bootstrap';
-import { IToDoList } from '../types'
+import { IToDo } from '../types'
 
-const ToDoTypeView: React.FC<{todos: IToDoList[]}> = ({todos}) => {
+const ToDoTypeView: React.FC<{todos: IToDo[]}> = ({todos}) => {
   const alertClicked = () => {
     alert('You clicked the third ListGroupItem');
   }

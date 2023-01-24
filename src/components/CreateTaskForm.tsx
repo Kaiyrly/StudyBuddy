@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { ITask, TODO_TYPE } from '../types'
+import { ITask, IToDoList, TODO_TYPE } from '../types'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { randomIdGenerator } from '../utils';
 
 export const CreateTaskForm: React.FC<{createHandler?: (goal: ITask) => void}> = ({createHandler}) => {
-  const [task, setTask] = useState<ITask>({name: "", id: randomIdGenerator(), goalId: randomIdGenerator(), type: TODO_TYPE, value: []})
+  const [task, setTask] = useState<ITask>({name: "", id: randomIdGenerator(), goalId: randomIdGenerator(), value: new IToDoList([])})
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     createHandler?.(task)
