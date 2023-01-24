@@ -8,7 +8,7 @@ import { IGoal } from '../types';
 import { randomIdGenerator } from '../utils';
 
 export const MainPage: React.FC = () => {
-    const [goals, setGoals] = useState<IGoal[]>([{name: "Demo Goal Name", id: randomIdGenerator()}]);
+    const [goals, setGoals] = useState<IGoal[]>([{name: "Demo Goal Name", id: randomIdGenerator(), tasks: []}]);
     const [showModal, setShowModal] = useState(false)
 
     const createGoal = (goal: IGoal) => {

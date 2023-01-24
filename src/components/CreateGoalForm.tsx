@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import { randomIdGenerator } from '../utils';
 
 export const CreateGoalForm: React.FC<{createHandler?: (goal: IGoal) => void}> = ({createHandler}) => {
-  const [goal, setGoal] = useState<IGoal>({name: "", id: randomIdGenerator()})
+  const [goal, setGoal] = useState<IGoal>({name: "", id: randomIdGenerator(), tasks: []})
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     createHandler?.(goal)

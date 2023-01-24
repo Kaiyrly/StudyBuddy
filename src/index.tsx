@@ -13,6 +13,8 @@ import { Statistics } from  './pages/Statistics';
 import { Settings } from './pages/Settings'; 
 import 'bootstrap/dist/css/bootstrap.css';
 import { NavBar } from './components/NavBar';
+import ToDoTypeView from './components/ToDoTypeView';
+const demoTodo = [{name: "Do first subtask", value: false}, {name: "Do another subtask", value: false}]
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -52,6 +54,11 @@ const router = createBrowserRouter([
   {
     path: "/goals/:id",
     element: <GoalPage/>,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/test",
+    element: <ToDoTypeView todos={demoTodo}/>,
     errorElement: <ErrorPage />,
   },
   {
