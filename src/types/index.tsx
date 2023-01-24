@@ -10,19 +10,24 @@ export interface IGoal {
 
 export interface ITask {
   name: string
-  value: IToDo[] | INumberType
+  type: string // = NUMBER_TYPE | TODO_TYPE | BOOLEAN_TYPE
+  value: IToDoList | INumberType
   goalId: string
   id: string
 }
 
+export interface IToDoList {
+  type: string
+  value: IToDo[]
+}
+
 export interface IToDo {
-  type: string // = NUMBER_TYPE | TODO_TYPE | BOOLEAN_TYPE
   name: string
   value: boolean
 }
 
 export interface INumberType {
-  type: string // = NUMBER_TYPE | TODO_TYPE | BOOLEAN_TYPE
+  type: string
   name: string
   value: boolean
   initialValue: number
