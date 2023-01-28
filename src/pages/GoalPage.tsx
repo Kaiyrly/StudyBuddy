@@ -43,8 +43,6 @@ const TaskModal: React.FC<{item: ITask}> = ({item}) => {
 }
 
 const DisplayTaskList: React.FC<{taskList: ITask[]}> = ({taskList}) => {
-    const [showModal, setShowModal] = useState(false)
-
     return (
         <div className="list-group">
             {taskList.map((item, i) => (
