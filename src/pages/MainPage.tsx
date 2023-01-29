@@ -23,7 +23,7 @@ export const MainPage: React.FC = () => {
                     <CreateGoalForm createHandler={createGoal} />
                 </ModalComponent>
             }
-            <Button variant="primary" size="lg" onClick={() => setShowModal(true)}>Create new goal</Button>{' '}
+            <Button variant="primary" size="lg" onClick={() => setShowModal(true)} style={{margin: "1rem 0"}}>Create new goal</Button>{' '}
             {CardList(goals)}
         </>
       )
