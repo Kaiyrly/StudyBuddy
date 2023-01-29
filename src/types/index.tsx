@@ -6,6 +6,7 @@ export interface IGoal {
   name: string
   id: string
   tasks: ITask[]
+  imgUrl: string
 }
 
 export interface ITask {

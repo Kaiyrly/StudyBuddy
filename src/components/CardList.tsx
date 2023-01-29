@@ -15,7 +15,8 @@ export const CardList = (goals: IGoal[]) => {
         return (
             // TODO: move this into its own component
             <Card key={goal.id} style={{ width: '18rem' }}>
-                        <Card.Img variant="top" src="holder.js/100px180" />
+                        {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
+                        <img src={require("../imgs/" + goal.imgUrl)}/>
                         <Card.Body>
                         <Card.Title>{goal.name}</Card.Title>
                         <Card.Text>
