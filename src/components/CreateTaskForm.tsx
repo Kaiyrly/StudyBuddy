@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ITask, IToDoList, TODO_TYPE } from '../types'
+import { ITask, IToDoList } from '../types'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { randomIdGenerator } from '../utils';

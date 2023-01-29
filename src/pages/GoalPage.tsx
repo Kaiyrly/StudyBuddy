@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Button from 'react-bootstrap/Button';
 import '../App.css'
-import { INumberType, ITask, IToDoList, NUMBER_TYPE, TODO_TYPE } from '../types';
+import { INumberType, ITask, IToDoList } from '../types';
 import { ModalComponent } from '../components/ModalComponent';
 import { CreateTaskForm } from '../components/CreateTaskForm';
 import { NumberTypeView } from '../components/NumberTypeView';
