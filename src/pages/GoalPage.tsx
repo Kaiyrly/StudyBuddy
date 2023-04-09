@@ -71,7 +71,6 @@ export const GoalPage: React.FC = () => {
 
   const updateTaskInDatabase = async (updatedTask: ITask) => {
     updatedTask.goalId = params.id ?? '';
-    console.log("updated task: ", updatedTask);
     try {
       await updateTask(updatedTask);
       setTasks((oldTasks) =>

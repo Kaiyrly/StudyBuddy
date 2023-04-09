@@ -14,7 +14,6 @@ export const TaskModal: React.FC<TaskModalProps> = ({ item, onUpdateTask }) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleModalClose = async (updatedItem: ITask) => {
-    console.log(updatedItem)
     if (updatedItem) {
       await onUpdateTask(updatedItem);
     }
@@ -23,19 +22,22 @@ export const TaskModal: React.FC<TaskModalProps> = ({ item, onUpdateTask }) => {
 
   const handleCloseForNumberType = (currentCount: number, goalCount: number) => {
     if (isNumberType(item.value)) {
+      const taskComplete = currentCount >= goalCount;
       handleModalClose({
         ...item,
-        value: new INumberType(item.value.name, item.value.value, item.value.initialValue, currentCount, goalCount),
+        value: new INumberType(item.value.name, taskComplete, item.value.initialValue, currentCount, goalCount),
+        taskComplete: taskComplete,
       });
     }
   };
 
   const handleCloseForToDoType = (todoList: IToDoList, todos: IToDo[]) => {
-    console.log(todoList, todos);
+    const allTodosCompleted = todos.every(todo => todo.value === true);
     if (isToDoList(item.value)) {
       handleModalClose({
         ...item,
         value: new IToDoList(todos),
+        taskComplete: allTodosCompleted,
       });
     }
   };

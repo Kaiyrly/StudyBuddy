@@ -11,9 +11,6 @@ interface ModalComponentProps {
 
 
 
-
-
-
 export const ModalComponent: FC<React.PropsWithChildren<ModalComponentProps>> = ({
   setShowModal,
   children,
@@ -33,7 +30,7 @@ export const ModalComponent: FC<React.PropsWithChildren<ModalComponentProps>> = 
   return (
     <>
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>{title || 'Modal'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>{children}</Modal.Body>

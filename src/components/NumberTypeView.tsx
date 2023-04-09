@@ -18,6 +18,27 @@ export const NumberTypeView: React.FC<NumberTypeViewProps> = ({
   const [currentCount, setCurrentCount] = useState(number.currentValue);
   const [goalCount, setGoalCount] = useState(number.targetValue);
 
+
+  const handleCurrentCountChange = (event: React.FocusEvent<HTMLSpanElement>) => {
+    setCurrentCount(Number(event.target.textContent));
+  };
+
+  const handleCurrentGoalChange = (event: React.FocusEvent<HTMLSpanElement>) => {
+    setGoalCount(Number(event.target.textContent));
+  };
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLSpanElement>) => {
+    const regex = /^[0-9]$/;
+    if (
+      !regex.test(event.key) &&
+      event.key !== "Backspace" &&
+      event.key !== "Delete"
+    ) {
+      event.preventDefault();
+    }
+  };
+  
+
     const incrementCurrentCount = () => {
       setCurrentCount((count: number) => count + 1);
     };
@@ -44,13 +65,36 @@ export const NumberTypeView: React.FC<NumberTypeViewProps> = ({
 
     return (
       <div className="app">
-        <p>Count: {currentCount}</p>
+        <p>
+          Count:{" "}
+          <span
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={handleCurrentCountChange}
+            onKeyDown={handleKeyPress}
+            className="current-count"
+          >
+            {currentCount}
+          </span>
+        </p>
         <div className="buttons">
           <Button variant="primary" onClick={decrementCurrentCount}>Decrement</Button>{' '}
           <Button variant="primary" onClick={incrementCurrentCount}>Increment</Button>{' '}
           <Button variant="primary" onClick={resetCurrentCount}>Reset</Button>{' '}
         </div>
-        <p>Count: {goalCount}</p>
+        
+        <p>
+          Goal count:{" "}
+          <span
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={handleCurrentGoalChange}
+            onKeyDown={handleKeyPress}
+            className="current-count"
+          >
+            {goalCount}
+          </span>
+        </p>
         <div className="buttons">
           <Button variant="primary" onClick={decrementGoalCount}>Decrement</Button>{' '}
           <Button variant="primary" onClick={incrementGoalCount}>Increment</Button>{' '}
