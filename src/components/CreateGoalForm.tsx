@@ -3,9 +3,10 @@ import { IGoal } from '../types'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { randomIdGenerator } from '../utils';
+import { v4 as uuidv4 } from 'uuid';
 
 export const CreateGoalForm: React.FC<{createHandler?: (goal: IGoal) => void}> = ({createHandler}) => {
-  const [goal, setGoal] = useState<IGoal>({name: "", id: randomIdGenerator(), tasks: [], imgUrl: ""})
+  const [goal, setGoal] = useState<IGoal>({name: "", goalId: uuidv4(), tasks: [], imgUrl: ""})
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     createHandler?.(goal)

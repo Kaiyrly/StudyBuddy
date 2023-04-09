@@ -2,7 +2,7 @@ import axios from 'axios';
 import { IGoal, ITask } from '../types';
 
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://localhost:5001/api';
 
 export const getGoals = async () => {
   const response = await axios.get(`${API_URL}/goals`);
@@ -14,13 +14,13 @@ export const createGoal = async (goal: IGoal) => {
   return response.data;
 };
 
-export const updateGoal = async (id: string, goal: IGoal) => {
-  const response = await axios.put(`${API_URL}/goals/${id}`, goal);
+export const updateGoal = async (goalId: string, goal: IGoal) => {
+  const response = await axios.put(`${API_URL}/goals/${goalId}`, goal);
   return response.data;
 };
 
 export const updateTask = async (task: ITask) => {
-  const response = await axios.put(`${API_URL}/tasks/${task.id}`, task);
+  const response = await axios.put(`${API_URL}/tasks/${task.taskId}`, task);
   return response.data;
 };
 
