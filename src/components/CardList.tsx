@@ -12,8 +12,8 @@ interface CardListProps {
 export const CardList: React.FC<CardListProps> = ({ goals }) => {
   const navigate = useNavigate();
 
-  const goToGoal = (goalId: String) => {
-    navigate('/goals/' + goalId);
+  const goToGoal = (goalId: String, goalName: String) => {
+    navigate('/goals/' + goalId, { state: { goalName } });
   };
 
   const displayCards = goals.map((goal) => {
@@ -25,7 +25,7 @@ export const CardList: React.FC<CardListProps> = ({ goals }) => {
         <Card.Body>
           <Card.Title>{goal.name}</Card.Title>
           <Card.Text>Some description for the goal which is not ready</Card.Text>
-          <Button variant="primary" onClick={() => goToGoal(goal.goalId)}>
+          <Button variant="primary" onClick={() => goToGoal(goal.goalId, goal.name)}>
             Go to Goal
           </Button>
         </Card.Body>

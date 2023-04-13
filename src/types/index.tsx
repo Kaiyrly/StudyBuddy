@@ -5,8 +5,10 @@ export const BOOLEAN_TYPE = "Boolean Type"
 export interface IGoal {
   name: string
   goalId: string
+  goalAchieved: boolean
   tasks: ITask[]
   imgUrl: string
+  completionDate?: Date;
 }
 
 export interface ITask {
@@ -16,6 +18,7 @@ export interface ITask {
   goalId: string
   taskId: string
   taskType: string
+  completionDate?: Date; 
 }
 
 export class IToDoList {

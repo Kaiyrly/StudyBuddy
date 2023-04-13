@@ -6,7 +6,7 @@ import { randomIdGenerator } from '../utils';
 import { v4 as uuidv4 } from 'uuid';
 
 export const CreateGoalForm: React.FC<{createHandler?: (goal: IGoal) => void}> = ({createHandler}) => {
-  const [goal, setGoal] = useState<IGoal>({name: "", goalId: uuidv4(), tasks: [], imgUrl: ""})
+  const [goal, setGoal] = useState<IGoal>({name: "", goalId: uuidv4(), goalAchieved: false, tasks: [], imgUrl: ""})
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     createHandler?.(goal)

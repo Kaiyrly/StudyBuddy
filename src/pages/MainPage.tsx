@@ -7,10 +7,15 @@ import { CreateGoalForm } from '../components/CreateGoalForm';
 import { IGoal } from '../types';
 import { randomIdGenerator } from '../utils';
 import { getGoals, createGoal, updateGoal } from '../services/api'
+import { getUserIdFromToken } from '../helpers/index'
+import useToken from '../hooks/useToken';
+
 
 export const MainPage: React.FC = () => {
-    const [goals, setGoals] = useState<IGoal[]>([{name: "Demo Goal Name", goalId: randomIdGenerator(), tasks: [], imgUrl: "arnold.png"}]);
+    const [goals, setGoals] = useState<IGoal[]>([]);
     const [showModal, setShowModal] = useState(false)
+    const { token } = useToken();
+    const userId = getUserIdFromToken(token ?? '') ?? '';
 
     useEffect(() => {
         fetchGoals();
@@ -24,7 +29,7 @@ export const MainPage: React.FC = () => {
 
     const handleCreation = async (newGoal: IGoal) => {
         try {
-            const createdGoal = await createGoal(newGoal);
+            const createdGoal = await createGoal(newGoal, userId);
             console.log(newGoal);
           } catch (error) {
             console.error('Error creating goal:', error);
@@ -35,13 +40,7 @@ export const MainPage: React.FC = () => {
 
     const fetchGoals = async () => {
         try {
-          const response = await fetch('http://localhost:5001/api/goals');
-          const responseText = await response.text();
-          if (!response.ok) {
-            throw new Error('Error fetching goals');
-          }
-          const fetchedGoals = JSON.parse(responseText);
-          console.log(fetchedGoals);
+          const fetchedGoals = await getGoals(userId);
           setGoals(fetchedGoals);
         } catch (error) {
           console.error('Error fetching goals:', error);

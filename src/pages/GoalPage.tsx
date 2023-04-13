@@ -6,12 +6,25 @@ import { ITask, INumberType, IToDoList, IToDo } from '../types';
 import { ModalComponent } from '../components/ModalComponent';
 import { CreateTaskForm } from '../components/CreateTaskForm';
 import { DisplayTaskList } from '../components/DisplayTaskList';
-import { updateTask } from '../services/api';
+import { updateTask, createTask, updateGoal } from '../services/api';
+import { useLocation } from 'react-router-dom';
+
 
 export const GoalPage: React.FC = () => {
     const params = useParams();
     const [tasks, setTasks] = useState<ITask[]>([]);
     const [showModal, setShowModal] = useState(false);
+    const location = useLocation();
+    const goalName = location.state?.goalName || '';
+    const goalId = params.id ?? '';
+
+    const [goalAchieved, setGoalAchieved] = useState(false);
+
+    const handleGoalAchievedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setGoalAchieved(e.target.checked);
+      updateGoal(goalId, e.target.checked);
+    };
+
 
     const fetchTasks = async () => {
       try {
@@ -58,10 +71,10 @@ export const GoalPage: React.FC = () => {
     setShowModal(false);
   };
 
-  const createTask = async (taskData: any) => {
+  const handleCreation = async (taskData: any) => {
     try {
-      const response = await axios.post(`http://localhost:5001/api/tasks`, taskData);
-      const newTaskData = response.data.newTask;
+      const response = await createTask(taskData);
+      const newTaskData = response.newTask;
       newTask(newTaskData);
     } catch (error) {
       console.error(`Error creating task: ${error}`);
@@ -90,14 +103,21 @@ export const GoalPage: React.FC = () => {
     <>
       {showModal && (
         <ModalComponent setShowModal={setShowModal} title="Create Task" onClose={handleModalClose}>
-          <CreateTaskForm createHandler={createTask} goalId={params.id ?? ''} />
+          <CreateTaskForm createHandler={handleCreation} goalId={params.id ?? ''} />
         </ModalComponent>
       
       )}
        <Button variant="primary" size="lg" onClick={() => setShowModal(true)}>
         Create new task
       </Button>{' '}
-      <p>This goal's id is {params.id}</p>
+      <p>{goalName}</p>
+      <label htmlFor="goalAchievedCheckbox">Goal Achieved:</label>
+      <input
+        type="checkbox"
+        id="goalAchievedCheckbox"
+        checked={goalAchieved}
+        onChange={handleGoalAchievedChange}
+      />
       <DisplayTaskList taskList={tasks} onUpdateTask={updateTaskInDatabase} />
     </>
   );
