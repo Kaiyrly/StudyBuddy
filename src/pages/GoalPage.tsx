@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
 import Button from 'react-bootstrap/Button';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -19,11 +21,6 @@ export const GoalPage: React.FC = () => {
     const goalId = params.id ?? '';
 
     const [goalAchieved, setGoalAchieved] = useState(false);
-
-    const handleGoalAchievedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setGoalAchieved(e.target.checked);
-      updateGoal(goalId, e.target.checked);
-    };
 
 
     const fetchTasks = async () => {
@@ -93,9 +90,22 @@ export const GoalPage: React.FC = () => {
       console.error(`Error updating task in database: ${error}`);
     }
   };
+
+  const filterTasksByCompletionStatus = (tasks: ITask[], completed: boolean) => {
+    return tasks.filter(task => task.taskComplete === completed);
+  };
   
   const handleModalClose = () => {
     // This can be left empty or you can add any logic needed when the modal is closed.
+  };
+
+  const handleTaskDeletion = async (taskId: string) => {
+    try {
+      await axios.delete(`http://localhost:5001/api/tasks/${taskId}`);
+      setTasks((oldTasks) => oldTasks.filter((task) => task.taskId !== taskId));
+    } catch (error) {
+      console.error(`Error deleting task: ${error}`);
+    }
   };
 
 
@@ -105,22 +115,30 @@ export const GoalPage: React.FC = () => {
         <ModalComponent setShowModal={setShowModal} title="Create Task" onClose={handleModalClose}>
           <CreateTaskForm createHandler={handleCreation} goalId={params.id ?? ''} />
         </ModalComponent>
-      
       )}
-       <Button variant="primary" size="lg" onClick={() => setShowModal(true)}>
+      <Button variant="primary" size="lg" onClick={() => setShowModal(true)}>
         Create new task
       </Button>{' '}
       <p>{goalName}</p>
-      <label htmlFor="goalAchievedCheckbox">Goal Achieved:</label>
-      <input
-        type="checkbox"
-        id="goalAchievedCheckbox"
-        checked={goalAchieved}
-        onChange={handleGoalAchievedChange}
-      />
-      <DisplayTaskList taskList={tasks} onUpdateTask={updateTaskInDatabase} />
+      <Tabs defaultActiveKey="inProcess" id="task-tabs">
+        <Tab eventKey="inProcess" title="In Process">
+          <DisplayTaskList
+            taskList={filterTasksByCompletionStatus(tasks, false)}
+            onUpdateTask={updateTaskInDatabase}
+            onDeleteTask={handleTaskDeletion}
+          />
+        </Tab>
+        <Tab eventKey="completed" title="Completed">
+          <DisplayTaskList
+            taskList={filterTasksByCompletionStatus(tasks, true)}
+            onUpdateTask={updateTaskInDatabase}
+            onDeleteTask={handleTaskDeletion}
+          />
+        </Tab>
+      </Tabs>
     </>
   );
+  
 };
 
 

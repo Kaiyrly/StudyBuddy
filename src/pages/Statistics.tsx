@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import { MDBContainer } from "mdbreact";
-import { Bar } from "react-chartjs-2";
+import React, { useState, useEffect, useCallback } from 'react';
+import { MDBContainer } from 'mdbreact';
+import { Bar } from 'react-chartjs-2';
 import Button from 'react-bootstrap/Button';
 import { fetchCompletedTasks } from '../services/api';
 import { ITask } from '../types';
-import "chart.js/auto";
-import '../App.css'
+import 'chart.js/auto';
+import '../App.css';
 
 export const Statistics: React.FC = () => {
   const formatChartData = (labels: any[], data: number[]) => {
@@ -13,117 +13,185 @@ export const Statistics: React.FC = () => {
       labels: labels,
       datasets: [
         {
-          label: "Tasks finished",
+          label: 'Tasks finished',
           data: data,
-          backgroundColor: "#02b844",
+          backgroundColor: '#02b844',
           borderWidth: 1,
-          borderColor: "#000000",
+          borderColor: '#000000',
         },
       ],
     };
   };
 
+  let weeklyData = Array(7).fill(0);
+  let monthlyData = Array(31).fill(0);
+  let annualData = Array(12).fill(0);
 
-  let dailyData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  let weeklyData= [0, 0, 0, 0, 0, 0, 0];
-  let monthlyData= [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  let annualData= [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  const weeklyLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  const monthlyLabels = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
+  const annualLabels = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 
-  const dailyLabels = ["00-01", "01-02", "02-03", "03-04", "04-05", "05-06", "06-07", "07-08", "08-09", "09-10", "10-11", 
-  "11-12", "12-13", "13-14", "14-15", "15-16", "16-17", "17-18", "18-19", "19-20", "20-21", 
-  "21-22", "22-23", "23-24"];
-  const weeklyLabels = ["M", "T", "W", "T", "F", "S", "S"];
-  const monthlyLabels = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"
-  , "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"];
-  const annualLabels = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"]
-
-  const [dailyChartData, setDailyChartData] = useState(formatChartData(dailyLabels, dailyData));
   const [weeklyChartData, setWeeklyChartData] = useState(formatChartData(weeklyLabels, weeklyData));
   const [monthlyChartData, setMonthlyChartData] = useState(formatChartData(monthlyLabels, monthlyData));
   const [annualChartData, setAnnualChartData] = useState(formatChartData(annualLabels, annualData));
 
+  const [currentWeek, setCurrentWeek] = useState({ start: new Date(), end: new Date() });
+  const [currentMonth, setCurrentMonth] = useState({ start: new Date(), end: new Date() });
+  const [currentYear, setCurrentYear] = useState({ start: new Date(), end: new Date() });
 
-  const [data, setData] = useState(formatChartData(dailyLabels, dailyData));
+  const [completedTasks, setCompletedTasks] = useState([]);
 
-    const processCompletedTasksData = (completedTasks: []) => {
-      const formatDate = (date: Date) => {
-        const d = new Date(date);
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}-${String(d.getHours()).padStart(2, "0")}`;
-      };
-    
-    
-    
-      // Process the completed tasks
-      completedTasks.forEach((task: ITask) => {
-        const completionDate = task.completionDate
-        const date = formatDate(completionDate ?? new Date());
-        const [yearStr, monthStr, dayStr, hourStr] = date.split("-");
+  const [data, setData] = useState(formatChartData(weeklyLabels, weeklyData));
 
-        const year = parseInt(yearStr);
-        const month = parseInt(monthStr);
-        const day = parseInt(dayStr);
-        const hour = parseInt(hourStr);
-
-        const hourKey = hour - 1;
-          
-        dailyData[hourKey] = (dailyData[hourKey] || 0) + 1;
-    
-        const d = new Date(year, month - 1, day);
-        const weekDay = d.getDay();
-        const weekKey = weekDay === 0 ? 6 : weekDay - 1; 
-        weeklyData[weekKey] = (weeklyData[weekKey] || 0) + 1;
-    
+  const processCompletedTasksData = (completedTasks: ITask[]) => {
+    console.log(currentWeek)
+    weeklyData.fill(0);
+    monthlyData.fill(0);
+    annualData.fill(0);
+  
+    completedTasks.forEach((task: ITask) => {
+      const completionDate = task.completionDate;
+      if (!completionDate) return;
+  
+      const date = new Date(completionDate);
+  
+      if (date >= currentWeek.start && date <= currentWeek.end) {
+        const weekDay = date.getDay();
+        const weekKey = weekDay === 0 ? 6 : weekDay - 1;
+        weeklyData[weekKey] += 1;
+      }
+  
+      if (date >= currentMonth.start && date <= currentMonth.end) {
+        const day = date.getDate();
         const monthKey = day - 1;
-        monthlyData[monthKey] = (monthlyData[monthKey] || 0) + 1;
-        
-        const yearKey = month - 1
-        annualData[yearKey] = (annualData[yearKey] || 0) + 1;
-      });
+        monthlyData[monthKey] += 1;
+      }
+  
+      if (date >= currentYear.start && date <= currentYear.end) {
+        const month = date.getMonth();
+        const yearKey = month;
+        annualData[yearKey] += 1;
+      }
+    });
+  
+    setWeeklyChartData(formatChartData(weeklyLabels, weeklyData));
+    setMonthlyChartData(formatChartData(monthlyLabels, monthlyData));
+    setAnnualChartData(formatChartData(annualLabels, annualData));
+  };
+  
 
-      setDailyChartData(formatChartData(dailyLabels, dailyData));
-      setWeeklyChartData(formatChartData(weeklyLabels, weeklyData));
-      setMonthlyChartData(formatChartData(monthlyLabels, monthlyData));
-      setAnnualChartData(formatChartData(annualLabels, annualData));
+  const fetchData = async () => {
+    const completeTasks = await fetchCompletedTasks();
+    setCompletedTasks(completeTasks);
+  };
 
-      setData(formatChartData(dailyLabels, dailyData));
-    };
+  const setWeekly = () => {
+    setData(weeklyChartData);
+  };
+  const setMonthly = () => {
+    setData(monthlyChartData);
+  };
+  const setAnnual = () => {
+    setData(annualChartData);
+  };
 
-    useEffect(() => {
-      (async () => {
-        const completedTasks = await fetchCompletedTasks();
+  useEffect(() => {
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1);
+    const endOfWeek = new Date(now);
+    endOfWeek.setDate(now.getDate() - now.getDay() + 7);
+  
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const endOfYear = new Date(now.getFullYear() + 1, 0, 1);
+  
+    setCurrentWeek({ start: startOfWeek, end: endOfWeek });
+    setCurrentMonth({ start: startOfMonth, end: endOfMonth });
+    setCurrentYear({ start: startOfYear, end: endOfYear });
+  
+    fetchData();
+  }, []);
+  
+  useEffect(() => {
+    processCompletedTasksData(completedTasks);
+  }, [completedTasks]);
+  
+
+
+  const previousPeriod = () => {
+    let newDate;
+    switch (data) {
+      case weeklyChartData:
+        newDate = new Date(currentWeek.start);
+        newDate.setDate(newDate.getDate() - 7);
+        setCurrentWeek({ start: newDate, end: new Date(newDate.setDate(newDate.getDate() + 6)) });
         processCompletedTasksData(completedTasks);
-      })();
-    }, []);
+        break;
+      case monthlyChartData:
+        newDate = new Date(currentMonth.start);
+        newDate.setMonth(newDate.getMonth() - 1);
+        setCurrentMonth({ start: new Date(newDate.getFullYear(), newDate.getMonth(), 1), end: new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0) });
+        processCompletedTasksData(completedTasks);
+        break;
+      // case annualChartData:
+      //   newDate = new Date(currentYear.start);
+      //   newDate.setFullYear(newDate.getFullYear() - 1);
+      //   setCurrentYear({ start: new Date(newDate.getFullYear(), 0, 1), end: new Date(newDate.getFullYear(), 11, 31) });
+        // processCompletedTasksData(completedTasks);
+      //   break;
+    }
+  };
 
-    const setDaily = () => {
-      setData(dailyChartData);
-    };
-    const setWeekly = () => {
-      setData(weeklyChartData);
-    };
-    const setMonthly = () => {
-      setData(monthlyChartData);
-    };
-    const setAnnual = () => {
-      setData(annualChartData);
-    };
+  const nextPeriod = () => {
+    let newDate;
+    switch (data) {
+      case weeklyChartData:
+        newDate = new Date(currentWeek.start);
+        newDate.setDate(newDate.getDate() + 7);
+        setCurrentWeek({ start: newDate, end: new Date(newDate.setDate(newDate.getDate() + 6)) });
+        break;
+      case monthlyChartData:
+        newDate = new Date(currentMonth.start);
+        newDate.setMonth(newDate.getMonth() + 1);
+        setCurrentMonth({ start: new Date(newDate.getFullYear(), newDate.getMonth(), 1), end: new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0) });
+        break;
+      // case annualChartData:
+      //   newDate = new Date(currentYear.start);
+      //   newDate.setFullYear(newDate.getFullYear() + 1);
+      //   setCurrentYear({ start: new Date(newDate.getFullYear(), 0, 1), end: new Date(newDate.getFullYear(), 11, 31) });
+      //   break;
+    }
+  };
 
-    
-      
-      return (
-        <>
-        <MDBContainer>
-          <Bar data={data}
-            style={{ maxHeight: '600px' }}
-          />
-        </MDBContainer>
-        <div>
-          <Button size="sm" onClick={() => setDaily()}>D</Button>
-          <Button size="sm" onClick={() => setWeekly()}>W</Button>
-          <Button size="sm" onClick={() => setMonthly()}>M</Button>
-          <Button size="sm" onClick={() => setAnnual()}>Y</Button>
+  return (
+    <>
+      <MDBContainer>
+        <Bar data={data} style={{ maxHeight: '600px' }} />
+      </MDBContainer>
+      <div>
+        <Button size="sm" onClick={previousPeriod}>
+          &lt;
+        </Button>
+        <Button size="sm" onClick={() => setWeekly()}>
+          W
+        </Button>
+        <Button size="sm" onClick={() => setMonthly()}>
+          M
+        </Button>
+        <Button size="sm" onClick={() => setAnnual()}>
+          Y
+        </Button>
+        <Button size="sm" onClick={nextPeriod}>
+          &gt;
+        </Button>
+      </div>
+    </>
+  );
+};
 
-        </div>
-        </>
-      );
-}
+export default Statistics;
+         
+

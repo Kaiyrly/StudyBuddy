@@ -4,7 +4,7 @@ import '../App.css'
 export const Settings: React.FC = () => {
     return (
         <>
-            Settings
+            Page is under construction, will be available soon...
         </>
       )
 }

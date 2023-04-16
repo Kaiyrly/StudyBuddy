@@ -11,9 +11,11 @@ import 'react-circular-progressbar/dist/styles.css';
 interface TaskModalProps {
   item: ITask;
   onUpdateTask: (updatedTask: ITask) => Promise<void>;
+  onDeleteTask: (taskId: string) => Promise<void>;
 }
 
-export const TaskModal: React.FC<TaskModalProps> = ({ item, onUpdateTask }) => {
+
+export const TaskModal: React.FC<TaskModalProps> = ({ item, onUpdateTask, onDeleteTask }) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleModalClose = async (updatedItem: ITask) => {
@@ -43,6 +45,10 @@ export const TaskModal: React.FC<TaskModalProps> = ({ item, onUpdateTask }) => {
         taskComplete: allTodosCompleted,
       });
     }
+  };
+
+  const handleDelete = async () => {
+    await onDeleteTask(item.taskId);
   };
 
   
@@ -94,6 +100,9 @@ export const TaskModal: React.FC<TaskModalProps> = ({ item, onUpdateTask }) => {
               Show task
             </Button>
           </div>
+          <Button variant="danger" size="lg" onClick={handleDelete}>
+            Delete task
+          </Button>
           <div style={{ width: '60px', height: '60px', marginBottom: '10px' }}>
             <CircularProgressbar value={completionPercentage} text={`${Math.round(completionPercentage)}%`} />
           </div>
@@ -130,6 +139,9 @@ export const TaskModal: React.FC<TaskModalProps> = ({ item, onUpdateTask }) => {
               Show task
             </Button>
           </div>
+          <Button variant="danger" size="lg" onClick={handleDelete}>
+            Delete task
+          </Button>
           <div style={{ width: '60px', height: '60px', marginBottom: '10px' }}>
             <CircularProgressbar value={completionPercentage} text={`${Math.round(completionPercentage)}%`} />
           </div>
