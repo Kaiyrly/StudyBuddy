@@ -45,3 +45,13 @@
     transform: rotate(360deg);
   }
 }
+
+
+.tag {
+  display: inline-block;
+  background-color: #f1f1f1;
+  padding: 4px 8px;
+  margin: 2px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}

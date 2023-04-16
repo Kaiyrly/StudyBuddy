@@ -9,9 +9,10 @@ interface CardListProps {
   goals: IGoal[];
   onDeleteGoal: (goalId: string) => Promise<void>;
   onUpdateGoal: (goalId: string, goalAchieved: boolean) => Promise<void>;
+  searchQuery: string;
 }
 
-export const CardList: React.FC<CardListProps> = ({ goals, onDeleteGoal, onUpdateGoal }) => {
+export const CardList: React.FC<CardListProps> = ({ goals, onDeleteGoal, onUpdateGoal, searchQuery }) => {
   const navigate = useNavigate();
 
   const goToGoal = (goalId: String, goalName: String) => {
@@ -27,7 +28,12 @@ export const CardList: React.FC<CardListProps> = ({ goals, onDeleteGoal, onUpdat
     await onUpdateGoal(goalId, goalAchieved);
   };
 
-  const displayCards = goals.map((goal) => {
+  const filteredGoals = goals.filter((goal) =>
+    goal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    goal.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const displayCards = filteredGoals.map((goal) => {
     return (
       // TODO: move this into its own component
       <Card key={goal.goalId} style={{ width: '18rem' }}>
@@ -35,7 +41,14 @@ export const CardList: React.FC<CardListProps> = ({ goals, onDeleteGoal, onUpdat
         <img src={require('../imgs/' + goal.imgUrl)} />
         <Card.Body>
           <Card.Title>{goal.name}</Card.Title>
-          <Card.Text>Some description for the goal which is not ready</Card.Text>
+          {/* Replace Card.Text with a component to display tags */}
+          <div>
+            {goal.tags.map((tag, index) => (
+              <span key={index} className="tag">
+                {tag}
+              </span>
+            ))}
+          </div>
           <Button variant="primary" onClick={() => goToGoal(goal.goalId, goal.name)}>
             Go to Goal
           </Button>
@@ -58,3 +71,5 @@ export const CardList: React.FC<CardListProps> = ({ goals, onDeleteGoal, onUpdat
 
   return <>{displayCards}</>;
 };
+
+

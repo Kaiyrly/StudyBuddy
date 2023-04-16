@@ -9,6 +9,7 @@ export interface IGoal {
   tasks: ITask[]
   imgUrl: string
   completionDate?: Date;
+  tags: string[];
 }
 
 export interface ITask {

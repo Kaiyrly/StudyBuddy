@@ -19,10 +19,16 @@ export const MainPage: React.FC = () => {
     const [showModal, setShowModal] = useState(false)
     const { token } = useToken();
     const userId = getUserIdFromToken(token ?? '') ?? '';
+    const [searchQuery, setSearchQuery] = useState('');
+
 
     useEffect(() => {
         fetchGoals();
-      }, []);
+    }, []);
+
+    const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchQuery(e.target.value);
+    };
 
     const createNewGoal = (goal: IGoal) => {
         setGoals([...goals, goal])
@@ -33,7 +39,6 @@ export const MainPage: React.FC = () => {
     const handleCreation = async (newGoal: IGoal) => {
         try {
             const createdGoal = await createGoal(newGoal, userId);
-            console.log(newGoal);
           } catch (error) {
             console.error('Error creating goal:', error);
         }
@@ -85,6 +90,14 @@ export const MainPage: React.FC = () => {
 
       return (
         <>
+
+          <input
+            type="text"
+            placeholder="Search by name or tag"
+            value={searchQuery}
+            onChange={handleSearchQueryChange}
+          />
+
           {showModal && (
             <ModalComponent setShowModal={setShowModal} title="Create Goal" onClose={handleModalClose}>
               <CreateGoalForm createHandler={createNewGoal} />
@@ -101,10 +114,20 @@ export const MainPage: React.FC = () => {
           {' '}
           <Tabs defaultActiveKey="inProcess" id="goal-tabs">
             <Tab eventKey="inProcess" title="In Process">
-              <CardList goals={filterGoalsByAchievementStatus(goals, false)} onDeleteGoal={handleGoalDeletion} onUpdateGoal={handleGoalUpdate} />
+              <CardList
+                goals={filterGoalsByAchievementStatus(goals, false)}
+                onDeleteGoal={handleGoalDeletion}
+                onUpdateGoal={handleGoalUpdate}
+                searchQuery={searchQuery}
+              />
             </Tab>
             <Tab eventKey="achieved" title="Achieved">
-              <CardList goals={filterGoalsByAchievementStatus(goals, true)} onDeleteGoal={handleGoalDeletion} onUpdateGoal={handleGoalUpdate} />
+              <CardList
+                goals={filterGoalsByAchievementStatus(goals, true)}
+                onDeleteGoal={handleGoalDeletion}
+                onUpdateGoal={handleGoalUpdate}
+                searchQuery={searchQuery}
+              />
             </Tab>
           </Tabs>
         </>
