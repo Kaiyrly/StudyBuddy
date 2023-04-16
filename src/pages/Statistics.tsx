@@ -8,6 +8,9 @@ import 'chart.js/auto';
 import '../App.css';
 
 export const Statistics: React.FC = () => {
+  const [currentView, setCurrentView] = useState("week");
+  const [topText, setTopText] = useState("");
+
   const formatChartData = (labels: any[], data: number[]) => {
     return {
       labels: labels,
@@ -29,25 +32,66 @@ export const Statistics: React.FC = () => {
 
   const weeklyLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
   const monthlyLabels = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
-  const annualLabels = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+  const annualLabels = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
   const [weeklyChartData, setWeeklyChartData] = useState(formatChartData(weeklyLabels, weeklyData));
   const [monthlyChartData, setMonthlyChartData] = useState(formatChartData(monthlyLabels, monthlyData));
   const [annualChartData, setAnnualChartData] = useState(formatChartData(annualLabels, annualData));
 
-  const [currentWeek, setCurrentWeek] = useState({ start: new Date(), end: new Date() });
-  const [currentMonth, setCurrentMonth] = useState({ start: new Date(), end: new Date() });
-  const [currentYear, setCurrentYear] = useState({ start: new Date(), end: new Date() });
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const [completedTasks, setCompletedTasks] = useState([]);
 
   const [data, setData] = useState(formatChartData(weeklyLabels, weeklyData));
 
+  const getWeekStartEnd = (date: Date) => {
+    const start = new Date(date);
+    start.setDate(date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1)); // Sets the start to Monday
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6); // Sets the end to Sunday
+    return { start, end };
+  };
+  
+  const getMonthStartEnd = (date: Date) => {
+    const start = new Date(date.getFullYear(), date.getMonth(), 1);
+    const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    return { start, end };
+  };
+  
+  const getYearStartEnd = (date: Date) => {
+    const start = new Date(date.getFullYear(), 0, 1);
+    const end = new Date(date.getFullYear(), 11, 31);
+    return { start, end };
+  };
+
+  const updateTopText = () => {
+
+    const currentWeek = getWeekStartEnd(currentDate);
+    const currentMonth = getMonthStartEnd(currentDate);
+    const currentYear = getYearStartEnd(currentDate);
+
+
+    if(currentView === "week") {
+      const newText = annualLabels[currentWeek.start.getMonth()] + '.' + currentWeek.start.getDate() + '-' + annualLabels[currentWeek.end.getMonth()] + '.' + currentWeek.end.getDate();
+      setTopText(newText);
+    }
+    if(currentView === "month") setTopText(annualLabels[currentMonth.start.getMonth()]);
+    
+    if(currentView === "year") setTopText(currentYear.start.getFullYear().toString());
+
+  }
+
   const processCompletedTasksData = (completedTasks: ITask[]) => {
-    console.log(currentWeek)
+    updateTopText();
+
     weeklyData.fill(0);
     monthlyData.fill(0);
     annualData.fill(0);
+  
+    const currentWeek = getWeekStartEnd(currentDate);
+    const currentMonth = getMonthStartEnd(currentDate);
+    const currentYear = getYearStartEnd(currentDate);
+
   
     completedTasks.forEach((task: ITask) => {
       const completionDate = task.completionDate;
@@ -56,6 +100,7 @@ export const Statistics: React.FC = () => {
       const date = new Date(completionDate);
   
       if (date >= currentWeek.start && date <= currentWeek.end) {
+        console.log(date, currentWeek)
         const weekDay = date.getDay();
         const weekKey = weekDay === 0 ? 6 : weekDay - 1;
         weeklyData[weekKey] += 1;
@@ -87,56 +132,43 @@ export const Statistics: React.FC = () => {
 
   const setWeekly = () => {
     setData(weeklyChartData);
+    setCurrentView("week");
   };
   const setMonthly = () => {
     setData(monthlyChartData);
+    setCurrentView("month");
   };
   const setAnnual = () => {
     setData(annualChartData);
+    setCurrentView("year");
   };
 
   useEffect(() => {
-    const now = new Date();
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay() + 1);
-    const endOfWeek = new Date(now);
-    endOfWeek.setDate(now.getDate() - now.getDay() + 7);
-  
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  
-    const startOfYear = new Date(now.getFullYear(), 0, 1);
-    const endOfYear = new Date(now.getFullYear() + 1, 0, 1);
-  
-    setCurrentWeek({ start: startOfWeek, end: endOfWeek });
-    setCurrentMonth({ start: startOfMonth, end: endOfMonth });
-    setCurrentYear({ start: startOfYear, end: endOfYear });
-  
     fetchData();
   }, []);
   
   useEffect(() => {
     processCompletedTasksData(completedTasks);
-  }, [completedTasks]);
+  }, [completedTasks, currentView]);
   
 
 
   const previousPeriod = () => {
     let newDate;
-    switch (data) {
-      case weeklyChartData:
-        newDate = new Date(currentWeek.start);
+    switch (currentView) {
+      case "week":
+        newDate = new Date(currentDate);
         newDate.setDate(newDate.getDate() - 7);
-        setCurrentWeek({ start: newDate, end: new Date(newDate.setDate(newDate.getDate() + 6)) });
+        setCurrentDate(newDate);
         processCompletedTasksData(completedTasks);
         break;
-      case monthlyChartData:
-        newDate = new Date(currentMonth.start);
+      case "month":
+        newDate = new Date(currentDate);
         newDate.setMonth(newDate.getMonth() - 1);
-        setCurrentMonth({ start: new Date(newDate.getFullYear(), newDate.getMonth(), 1), end: new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0) });
+        setCurrentDate(newDate);
         processCompletedTasksData(completedTasks);
         break;
-      // case annualChartData:
+      // case "year":
       //   newDate = new Date(currentYear.start);
       //   newDate.setFullYear(newDate.getFullYear() - 1);
       //   setCurrentYear({ start: new Date(newDate.getFullYear(), 0, 1), end: new Date(newDate.getFullYear(), 11, 31) });
@@ -147,16 +179,18 @@ export const Statistics: React.FC = () => {
 
   const nextPeriod = () => {
     let newDate;
-    switch (data) {
-      case weeklyChartData:
-        newDate = new Date(currentWeek.start);
+    switch (currentView) {
+      case "week":
+        newDate = new Date(currentDate);
         newDate.setDate(newDate.getDate() + 7);
-        setCurrentWeek({ start: newDate, end: new Date(newDate.setDate(newDate.getDate() + 6)) });
+        setCurrentDate(newDate);
+        processCompletedTasksData(completedTasks);
         break;
-      case monthlyChartData:
-        newDate = new Date(currentMonth.start);
+      case "month":
+        newDate = new Date(currentDate);
         newDate.setMonth(newDate.getMonth() + 1);
-        setCurrentMonth({ start: new Date(newDate.getFullYear(), newDate.getMonth(), 1), end: new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0) });
+        setCurrentDate(newDate);
+        processCompletedTasksData(completedTasks);
         break;
       // case annualChartData:
       //   newDate = new Date(currentYear.start);
@@ -168,6 +202,7 @@ export const Statistics: React.FC = () => {
 
   return (
     <>
+      <p>{topText}</p>
       <MDBContainer>
         <Bar data={data} style={{ maxHeight: '600px' }} />
       </MDBContainer>
