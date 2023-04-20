@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import { ITask, IToDoList, INumberType, IToDo } from '../types';
 import { ModalComponent } from './ModalComponent';
@@ -22,6 +22,10 @@ export const TaskModal: React.FC<TaskModalProps> = ({ item, onUpdateTask, onDele
   const [showModal, setShowModal] = useState(false);    
   const { token } = useToken();
   const userId = getUserIdFromToken(token ?? '') ?? '';
+
+  useEffect(() => {
+    console.log(item);
+  })
 
 
   const handleModalClose = async (updatedItem: ITask) => {

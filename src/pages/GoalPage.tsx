@@ -11,6 +11,19 @@ import { DisplayTaskList } from '../components/DisplayTaskList';
 import { updateTask, createTask, updateGoal } from '../services/api';
 import { useLocation } from 'react-router-dom';
 
+interface IFetchedTask {
+  completionDate: Date;
+  createdAt: Date; 
+  goalId: string; 
+  id: string;
+  name: string;
+  taskComplete: boolean;
+  taskId: string
+  taskType: string
+  updatedAt: Date
+  value: any
+}
+
 
 export const GoalPage: React.FC = () => {
     const params = useParams();
@@ -21,6 +34,27 @@ export const GoalPage: React.FC = () => {
     const goalId = params.id ?? '';
 
     const [goalAchieved, setGoalAchieved] = useState(false);
+
+    const formatTask = (task: IFetchedTask) => {
+      const derivedTask: ITask = {
+        name: task.name,
+        taskId: task.taskId,
+        goalId: task.goalId,
+        value: task.value,
+        taskComplete: task.taskComplete,
+        taskType: task.taskType,
+      };
+
+      if (task.taskType === 'NumberType') {
+        derivedTask.value = new INumberType(task.name, task.taskComplete, task.value.initialValue, task.value.currentValue, task.value.targetValue);
+      }
+      if (task.taskType === 'ToDoList') {
+        const toDoList: IToDo[] = task.value;
+        derivedTask.value = new IToDoList(toDoList);
+      }
+
+      return derivedTask
+    }
 
 
     const fetchTasks = async () => {
@@ -34,24 +68,7 @@ export const GoalPage: React.FC = () => {
     
         for (let i = 0; i < fetchedTasks.length; i++) {
           const task = fetchedTasks[i];
-          const derivedTask: ITask = {
-            name: task.name,
-            taskId: task.taskId,
-            goalId: task.goalId,
-            value: task.value,
-            taskComplete: task.taskComplete,
-            taskType: task.taskType,
-          };
-    
-          if (task.taskType === 'NumberType') {
-            derivedTask.value = new INumberType(task.name, task.taskComplete, task.value.initialValue, task.value.currentValue, task.value.targetValue);
-          }
-          if (task.taskType === 'ToDoList') {
-            const toDoList: IToDo[] = task.value;
-            derivedTask.value = new IToDoList(toDoList);
-          }
-    
-          derivedTasks.push(derivedTask);
+          derivedTasks.push(formatTask(task));
         }
     
         setTasks(derivedTasks);
@@ -72,7 +89,7 @@ export const GoalPage: React.FC = () => {
     try {
       const response = await createTask(taskData);
       const newTaskData = response.newTask;
-      newTask(newTaskData);
+      newTask(formatTask(newTaskData));
     } catch (error) {
       console.error(`Error creating task: ${error}`);
     }
@@ -121,20 +138,22 @@ export const GoalPage: React.FC = () => {
       </Button>{' '}
       <p>{goalName}</p>
       <Tabs defaultActiveKey="inProcess" id="task-tabs">
-        <Tab eventKey="inProcess" title="In Process">
-          <DisplayTaskList
-            taskList={filterTasksByCompletionStatus(tasks, false)}
-            onUpdateTask={updateTaskInDatabase}
-            onDeleteTask={handleTaskDeletion}
-          />
-        </Tab>
-        <Tab eventKey="completed" title="Completed">
-          <DisplayTaskList
-            taskList={filterTasksByCompletionStatus(tasks, true)}
-            onUpdateTask={updateTaskInDatabase}
-            onDeleteTask={handleTaskDeletion}
-          />
-        </Tab>
+      <Tab eventKey="inProcess" title="In Process">
+        <DisplayTaskList
+          key={tasks.length}
+          taskList={filterTasksByCompletionStatus(tasks, false)}
+          onUpdateTask={updateTaskInDatabase}
+          onDeleteTask={handleTaskDeletion}
+        />
+      </Tab>
+      <Tab eventKey="completed" title="Completed">
+        <DisplayTaskList
+          key={tasks.length}
+          taskList={filterTasksByCompletionStatus(tasks, true)}
+          onUpdateTask={updateTaskInDatabase}
+          onDeleteTask={handleTaskDeletion}
+        />
+      </Tab>
       </Tabs>
     </>
   );
