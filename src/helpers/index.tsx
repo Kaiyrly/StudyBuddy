@@ -3,7 +3,7 @@ import jwtDecode from 'jwt-decode';
 
 
 interface DecodedToken {
-    id: string;
+    userId: string;
     username: string;
     iat: number;
     exp: number;
@@ -12,7 +12,7 @@ interface DecodedToken {
 export function getUserIdFromToken(token: string) {
   try {
     const decodedToken = jwtDecode(token) as DecodedToken;
-    return decodedToken.id;
+    return decodedToken.userId;
   } catch (error) {
     console.error('Error decoding token:', error);
     return null;

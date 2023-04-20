@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { IGoal, ITask } from '../types';
+import { cp } from 'fs';
 
 
 const API_URL = 'http://localhost:5001/api';
@@ -44,39 +45,58 @@ export const getGoals = async (userId: string) => {
 };
 
 export const createGoal = async (goal: IGoal, userId: string) => {
-  const response = await axios.post(`${API_URL}/goals`, { ...goal, userId });
+  const response = await API.post(`${API_URL}/goals`, { ...goal, userId });
   return response.data;
 };
 
 export const updateGoal = async (goalId: string, goalAchieved: boolean) => {
-  const response = await axios.put(`${API_URL}/goals/${goalId}`, { goalAchieved });
+  const response = await API.put(`${API_URL}/goals/${goalId}`, { goalAchieved });
   console.log(response);
   return response.data;
 };
 
 export const createTask = async (task: ITask) => {
-  const response = await axios.post(`${API_URL}/tasks`, task);
+  const response = await API.post(`${API_URL}/tasks`, task);
   return response.data;
 };
 
 export const updateTask = async (task: ITask) => {
-  const response = await axios.put(`${API_URL}/tasks/${task.taskId}`, task);
+  const response = await API.put(`${API_URL}/tasks/${task.taskId}`, task);
   return response.data;
 };
 
-export const fetchCompletedTasks = async () => {
+
+export const fetchCompletedTasks = async (userId: string) => {
   try {
-    const response = await API.get("/tasks/completed");
+    const response = await API.get(`/completedTasksPerDay/${userId}`)
     const completedTasks = response.data;
     return completedTasks;
   } catch (error) {
-    console.error("Error fetching completed tasks:", error);
+    console.log("Error fetching completed tasks: ", error);
+  }
+}
+
+export const updateCompletedTasks = async (userId: string, date: Date, taskComplete: boolean) => {
+  console.log(userId, date, taskComplete)
+  date.setHours(0, 0, 0, 0);
+  try {
+    const response = await API.put('/completedTasksPerDay', {
+      userId,
+      date,
+      taskComplete,
+    });
+
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error('Failed to update completed tasks');
+    }
+  } catch (error) {
+    console.error('Error updating completed tasks:', error);
   }
 };
 
 export const fakeAuth = async (email: String, password: String) => {
   try {
-    const response = await axios.post('/api/login', {
+    const response = await API.post('/api/login', {
       email,
       password,
     });

@@ -4,7 +4,10 @@ import { ITask, IToDoList, INumberType, IToDo } from '../types';
 import { ModalComponent } from './ModalComponent';
 import ToDoTypeView from './ToDoTypeView';
 import { NumberTypeView } from './NumberTypeView';
+import { updateCompletedTasks } from '../services/api';
 import { CircularProgressbar } from 'react-circular-progressbar';
+import { getUserIdFromToken } from '../helpers/index'
+import useToken from '../hooks/useToken';
 import 'react-circular-progressbar/dist/styles.css';
 
 
@@ -16,7 +19,10 @@ interface TaskModalProps {
 
 
 export const TaskModal: React.FC<TaskModalProps> = ({ item, onUpdateTask, onDeleteTask }) => {
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);    
+  const { token } = useToken();
+  const userId = getUserIdFromToken(token ?? '') ?? '';
+
 
   const handleModalClose = async (updatedItem: ITask) => {
     if (updatedItem) {
@@ -28,6 +34,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({ item, onUpdateTask, onDele
   const handleCloseForNumberType = (currentCount: number, goalCount: number) => {
     if (isNumberType(item.value)) {
       const taskComplete = currentCount >= goalCount;
+      if(taskComplete !== item.taskComplete) updateCompletedTasks(userId, new Date(), taskComplete);
       handleModalClose({
         ...item,
         value: new INumberType(item.value.name, taskComplete, item.value.initialValue, currentCount, goalCount),
@@ -35,10 +42,11 @@ export const TaskModal: React.FC<TaskModalProps> = ({ item, onUpdateTask, onDele
       });
     }
   };
-
+  
   const handleCloseForToDoType = (todoList: IToDoList, todos: IToDo[]) => {
-    const allTodosCompleted = todos.every(todo => todo.value === true);
     if (isToDoList(item.value)) {
+      const allTodosCompleted = todos.every(todo => todo.value === true);
+      if(allTodosCompleted !== item.taskComplete) updateCompletedTasks(userId, new Date(), allTodosCompleted);
       handleModalClose({
         ...item,
         value: new IToDoList(todos),
@@ -46,6 +54,13 @@ export const TaskModal: React.FC<TaskModalProps> = ({ item, onUpdateTask, onDele
       });
     }
   };
+  
+  
+  
+  
+  
+  
+  
 
   const handleDelete = async () => {
     await onDeleteTask(item.taskId);

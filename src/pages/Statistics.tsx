@@ -1,15 +1,25 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect} from 'react';
 import { MDBContainer } from 'mdbreact';
 import { Bar } from 'react-chartjs-2';
 import Button from 'react-bootstrap/Button';
 import { fetchCompletedTasks } from '../services/api';
+import { getUserIdFromToken } from '../helpers';
 import { ITask } from '../types';
+import useToken from '../hooks/useToken';
 import 'chart.js/auto';
 import '../App.css';
+
+type CompletedTask = {
+  date: Date;
+  completedTasks: number;
+};
 
 export const Statistics: React.FC = () => {
   const [currentView, setCurrentView] = useState("week");
   const [topText, setTopText] = useState("");
+
+  const { token } = useToken();
+  const userId = getUserIdFromToken(token ?? '') ?? '';
 
   const formatChartData = (labels: any[], data: number[]) => {
     return {
@@ -91,9 +101,12 @@ export const Statistics: React.FC = () => {
     const currentYear = getYearStartEnd();
   
     console.log('currentWeek:', currentWeek);
+
+    console.log(completedTasks)
   
-    completedTasks.forEach((task: ITask) => {
-      const completionDate = task.completionDate;
+    completedTasks.forEach((completed: CompletedTask) => {
+      const completionDate = completed.date;
+      const tasksCompleted = completed.completedTasks
       if (!completionDate) return;
   
       const date = new Date(completionDate);
@@ -101,19 +114,19 @@ export const Statistics: React.FC = () => {
       if (date >= currentWeek.start && date <= currentWeek.end) {
         const weekDay = date.getDay();
         const weekKey = weekDay === 0 ? 6 : weekDay - 1;
-        updatedWeeklyData[weekKey] += 1;
+        updatedWeeklyData[weekKey] += tasksCompleted;
       }
   
       if (date >= currentMonth.start && date <= currentMonth.end) {
         const day = date.getDate();
         const monthKey = day - 1;
-        updatedMonthlyData[monthKey] += 1;
+        updatedMonthlyData[monthKey] += tasksCompleted;
       }
   
       if (date >= currentYear.start && date <= currentYear.end) {
         const month = date.getMonth();
         const yearKey = month;
-        updatedAnnualData[yearKey] += 1;
+        updatedAnnualData[yearKey] += tasksCompleted;
       }
     });
   
@@ -127,7 +140,7 @@ export const Statistics: React.FC = () => {
   
 
   const fetchData = async () => {
-    const completeTasks = await fetchCompletedTasks();
+    const completeTasks = await fetchCompletedTasks(userId);
     setCompletedTasks(completeTasks);
   };
 
