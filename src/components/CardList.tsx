@@ -2,8 +2,11 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { useNavigate } from 'react-router-dom';
-import '../App.css';
+import { FaTrash } from 'react-icons/fa';
 import { IGoal } from '../types';
+import '../App.css';
+import '../styles/CardList.css';
+
 
 interface CardListProps {
   goals: IGoal[];
@@ -35,13 +38,11 @@ export const CardList: React.FC<CardListProps> = ({ goals, onDeleteGoal, onUpdat
 
   const displayCards = filteredGoals.map((goal) => {
     return (
-      // TODO: move this into its own component
-      <Card key={goal.goalId} style={{ width: '18rem' }}>
-        {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
-        {/* <img src={require('../imgs/' + goal.imgUrl)} /> */}
+      <Card key={goal.goalId} className="goal-card">
         <Card.Body>
-          <Card.Title>{goal.name}</Card.Title>
-          {/* Replace Card.Text with a component to display tags */}
+          <div className="clickable-title" onClick={() => goToGoal(goal.goalId, goal.name)}>
+            <Card.Title>{goal.name}</Card.Title>
+          </div>
           <div>
             {goal.tags.map((tag, index) => (
               <span key={index} className="tag">
@@ -49,27 +50,24 @@ export const CardList: React.FC<CardListProps> = ({ goals, onDeleteGoal, onUpdat
               </span>
             ))}
           </div>
-          <Button variant="primary" onClick={() => goToGoal(goal.goalId, goal.name)}>
-            Go to Goal
-          </Button>
         </Card.Body>
         <Card.Footer>
-          <input
-            type="checkbox"
-            id={`goalAchievedCheckbox-${goal.goalId}`}
-            checked={goal.goalAchieved}
-            onChange={(e) => handleGoalAchievedChange(goal.goalId, e.target.checked)}
-          />
-          <label htmlFor={`goalAchievedCheckbox-${goal.goalId}`}>Goal Achieved</label>
-          <Button variant="danger" onClick={() => handleDeleteGoal(goal.goalId)}>
-            Delete Goal
+          <div className="goal-achieved">
+            <input
+              type="checkbox"
+              id={`goalAchievedCheckbox-${goal.goalId}`}
+              checked={goal.goalAchieved}
+              onChange={(e) => handleGoalAchievedChange(goal.goalId, e.target.checked)}
+            />
+            <label htmlFor={`goalAchievedCheckbox-${goal.goalId}`}>Goal Achieved</label>
+          </div>
+          <Button variant="secondary" className="delete-goal-btn" onClick={() => handleDeleteGoal(goal.goalId)}>
+            <FaTrash />
           </Button>
         </Card.Footer>
       </Card>
     );
   });
 
-  return <>{displayCards}</>;
+  return <div className="card-container">{displayCards}</div>;
 };
-
-

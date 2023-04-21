@@ -10,6 +10,7 @@ import { CreateTaskForm } from '../components/CreateTaskForm';
 import { DisplayTaskList } from '../components/DisplayTaskList';
 import { updateTask, createTask, updateGoal } from '../services/api';
 import { useLocation } from 'react-router-dom';
+import '../styles/GoalPage.css';
 
 interface IFetchedTask {
   completionDate: Date;
@@ -128,33 +129,40 @@ export const GoalPage: React.FC = () => {
 
   return (
     <>
-      {showModal && (
-        <ModalComponent setShowModal={setShowModal} title="Create Task" onClose={handleModalClose}>
-          <CreateTaskForm createHandler={handleCreation} goalId={params.id ?? ''} />
-        </ModalComponent>
-      )}
-      <Button variant="primary" size="lg" onClick={() => setShowModal(true)}>
-        Create new task
-      </Button>{' '}
-      <p>{goalName}</p>
-      <Tabs defaultActiveKey="inProcess" id="task-tabs">
-      <Tab eventKey="inProcess" title="In Process">
-        <DisplayTaskList
-          key={tasks.length}
-          taskList={filterTasksByCompletionStatus(tasks, false)}
-          onUpdateTask={updateTaskInDatabase}
-          onDeleteTask={handleTaskDeletion}
-        />
-      </Tab>
-      <Tab eventKey="completed" title="Completed">
-        <DisplayTaskList
-          key={tasks.length}
-          taskList={filterTasksByCompletionStatus(tasks, true)}
-          onUpdateTask={updateTaskInDatabase}
-          onDeleteTask={handleTaskDeletion}
-        />
-      </Tab>
-      </Tabs>
+      <div className="goal-page-container">
+        {showModal && (
+          <ModalComponent setShowModal={setShowModal} title="Create Task" onClose={handleModalClose}>
+            <CreateTaskForm createHandler={handleCreation} goalId={params.id ?? ''} />
+          </ModalComponent>
+        )}
+        <Button
+          className="create-task-button"
+          variant="primary"
+          size="lg"
+          onClick={() => setShowModal(true)}
+        >
+          Create new task
+        </Button>{' '}
+        <p className="goal-name">{goalName}</p>
+        <Tabs defaultActiveKey="inProcess" id="task-tabs">
+          <Tab eventKey="inProcess" title="In Process">
+            <DisplayTaskList
+              key={tasks.length}
+              taskList={filterTasksByCompletionStatus(tasks, false)}
+              onUpdateTask={updateTaskInDatabase}
+              onDeleteTask={handleTaskDeletion}
+            />
+          </Tab>
+          <Tab eventKey="completed" title="Completed">
+            <DisplayTaskList
+              key={tasks.length}
+              taskList={filterTasksByCompletionStatus(tasks, true)}
+              onUpdateTask={updateTaskInDatabase}
+              onDeleteTask={handleTaskDeletion}
+            />
+          </Tab>
+        </Tabs>
+      </div>
     </>
   );
   

@@ -8,7 +8,11 @@ import { updateCompletedTasks } from '../services/api';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { getUserIdFromToken } from '../helpers/index'
 import useToken from '../hooks/useToken';
+
+import { FaTrash } from 'react-icons/fa';
 import 'react-circular-progressbar/dist/styles.css';
+import '../styles/TaskModal.css';
+
 
 
 interface TaskModalProps {
@@ -93,81 +97,51 @@ export const TaskModal: React.FC<TaskModalProps> = ({ item, onUpdateTask, onDele
 
   const completionPercentage = calculateCompletionPercentage(item);
 
-  if (isToDoList(item.value)) {
-    return (
-      <>
-        {showModal && (
-            <ModalComponent
-              setShowModal={setShowModal}
-              title={item.name}
-              onClose={handleModalClose}
-              onSave={() => handleModalClose(item)}
-            >
-            <ToDoTypeView item={item} taskId={item.taskId} onClose={handleCloseForToDoType}/>
-                      
-            </ModalComponent>
-
-        )}
-    
-        <a
-          className="list-group-item list-group-item-action align-items-start"
-          style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+  return (
+    <>
+      {showModal && (
+        <ModalComponent
+          setShowModal={setShowModal}
+          title={item.name}
+          onClose={handleModalClose}
+          onSave={() => handleModalClose(item)}
         >
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <p className="mb-1">{item.name}</p>
-            <Button variant="primary" size="lg" onClick={() => setShowModal(true)}>
-              Show task
-            </Button>
-          </div>
-          <Button variant="danger" size="lg" onClick={handleDelete}>
-            Delete task
+          {isToDoList(item.value) && (
+            <ToDoTypeView item={item} taskId={item.taskId} onClose={handleCloseForToDoType} />
+          )}
+          {isNumberType(item.value) && (
+            <NumberTypeView number={item.value} onClose={handleCloseForNumberType} />
+          )}
+        </ModalComponent>
+      )}
+      <a className="list-group-item list-group-item-action task-modal-item">
+        <div className="task-modal-item-name">{item.name}</div>
+        <div className="task-modal-buttons">
+          <Button
+            className="task-modal-button"
+            variant="primary"
+            size="sm"
+            onClick={() => setShowModal(true)}
+          >
+            Show task
           </Button>
-          <div style={{ width: '60px', height: '60px', marginBottom: '10px' }}>
-            <CircularProgressbar value={completionPercentage} text={`${Math.round(completionPercentage)}%`} />
-          </div>
-        </a>
-      </>
-    );
-  }
-  
-  
-  
-  
-  
-  
-  if (isNumberType(item.value)) {
-    return (
-      <>
-        {showModal && (
-            <ModalComponent
-              setShowModal={setShowModal}
-              title={item.name}
-              onClose={handleModalClose}
-              onSave={() => handleModalClose(item)}
-            >
-            <NumberTypeView number={item.value} onClose={handleCloseForNumberType}/>          
-            </ModalComponent>
-        )}
-        <a
-          className="list-group-item list-group-item-action align-items-start"
-          style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <p className="mb-1">{item.name}</p>
-            <Button variant="primary" size="lg" onClick={() => setShowModal(true)}>
-              Show task
-            </Button>
-          </div>
-          <Button variant="danger" size="lg" onClick={handleDelete}>
-            Delete task
+          <Button
+            className="task-modal-button"
+            variant="secondary"
+            size="sm"
+            onClick={handleDelete}
+          >
+            <FaTrash />
           </Button>
-          <div style={{ width: '60px', height: '60px', marginBottom: '10px' }}>
-            <CircularProgressbar value={completionPercentage} text={`${Math.round(completionPercentage)}%`} />
+          <div style={{ width: '60px', height: '60px', marginLeft: '10px' }}>
+            <CircularProgressbar
+              value={completionPercentage}
+              text={`${Math.round(completionPercentage)}%`}
+            />
           </div>
-          
-        </a>
-      </>
-    );
-  }
+        </div>
+      </a>
+    </>
+  );
   return <>default view</>;
 };

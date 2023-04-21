@@ -12,6 +12,7 @@ import { randomIdGenerator } from '../utils';
 import { getGoals, createGoal, updateGoal } from '../services/api'
 import { getUserIdFromToken } from '../helpers/index'
 import useToken from '../hooks/useToken';
+import '../styles/MainPage.css';
 
 
 export const MainPage: React.FC = () => {
@@ -90,46 +91,48 @@ export const MainPage: React.FC = () => {
 
       return (
         <>
-
-          <input
-            type="text"
-            placeholder="Search by name or tag"
-            value={searchQuery}
-            onChange={handleSearchQueryChange}
-          />
-
-          {showModal && (
-            <ModalComponent setShowModal={setShowModal} title="Create Goal" onClose={handleModalClose}>
-              <CreateGoalForm createHandler={createNewGoal} />
-            </ModalComponent>
-          )}
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={() => setShowModal(true)}
-            style={{ margin: '1rem 0' }}
-          >
-            Create new goal
-          </Button>
-          {' '}
-          <Tabs defaultActiveKey="inProcess" id="goal-tabs">
-            <Tab eventKey="inProcess" title="In Process">
-              <CardList
-                goals={filterGoalsByAchievementStatus(goals, false)}
-                onDeleteGoal={handleGoalDeletion}
-                onUpdateGoal={handleGoalUpdate}
-                searchQuery={searchQuery}
-              />
-            </Tab>
-            <Tab eventKey="achieved" title="Achieved">
-              <CardList
-                goals={filterGoalsByAchievementStatus(goals, true)}
-                onDeleteGoal={handleGoalDeletion}
-                onUpdateGoal={handleGoalUpdate}
-                searchQuery={searchQuery}
-              />
-            </Tab>
-          </Tabs>
+          <div className="main-page-container">
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search by name or tag"
+              value={searchQuery}
+              onChange={handleSearchQueryChange}
+            />
+      
+            {showModal && (
+              <ModalComponent setShowModal={setShowModal} title="Create Goal" onClose={handleModalClose}>
+                <CreateGoalForm createHandler={createNewGoal} />
+              </ModalComponent>
+            )}
+            <Button
+              className="create-goal-button"
+              variant="primary"
+              size="lg"
+              onClick={() => setShowModal(true)}
+            >
+              Create new goal
+            </Button>
+            {' '}
+            <Tabs defaultActiveKey="inProcess" id="goal-tabs">
+              <Tab eventKey="inProcess" title="In Process">
+                <CardList
+                  goals={filterGoalsByAchievementStatus(goals, false)}
+                  onDeleteGoal={handleGoalDeletion}
+                  onUpdateGoal={handleGoalUpdate}
+                  searchQuery={searchQuery}
+                />
+              </Tab>
+              <Tab eventKey="achieved" title="Achieved">
+                <CardList
+                  goals={filterGoalsByAchievementStatus(goals, true)}
+                  onDeleteGoal={handleGoalDeletion}
+                  onUpdateGoal={handleGoalUpdate}
+                  searchQuery={searchQuery}
+                />
+              </Tab>
+            </Tabs>
+          </div>
         </>
       );
       
