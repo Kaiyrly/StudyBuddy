@@ -94,6 +94,12 @@ export const updateCompletedTasks = async (userId: string, date: Date, taskCompl
   }
 };
 
+// export const updatePassword = async (userId, newPassowrd) => {
+//   try {
+//     const response = await API.put("/api/auth")
+//   }
+// }
+
 export const fakeAuth = async (email: String, password: String) => {
   try {
     const response = await API.post('/api/login', {

@@ -31,10 +31,10 @@ export const CreateGoalForm: React.FC<{createHandler?: (goal: IGoal) => void}> =
         <Form.Label>Name of the goal</Form.Label>
         <Form.Control type="text" placeholder="Apply to OnSquare" onChange={(e) => {setGoal({...goal, name: e.target.value})}}/>
       </Form.Group>
-      <Form.Group controlId="formFile" className="mb-3">
+      {/* <Form.Group controlId="formFile" className="mb-3">
         <Form.Label>Default file input example</Form.Label>
         <Form.Control type="file" onChange={(e) => setGoal({...goal, imgUrl: saveImage(e)})}/>
-      </Form.Group>
+      </Form.Group> */}
       <Form.Group className="mb-3" controlId="exampleForm.ControlInput2">
         <Form.Label>Tags</Form.Label>
         <Form.Control

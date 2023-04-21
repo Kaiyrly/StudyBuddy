@@ -38,7 +38,7 @@ export const CardList: React.FC<CardListProps> = ({ goals, onDeleteGoal, onUpdat
       // TODO: move this into its own component
       <Card key={goal.goalId} style={{ width: '18rem' }}>
         {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
-        <img src={require('../imgs/' + goal.imgUrl)} />
+        {/* <img src={require('../imgs/' + goal.imgUrl)} /> */}
         <Card.Body>
           <Card.Title>{goal.name}</Card.Title>
           {/* Replace Card.Text with a component to display tags */}

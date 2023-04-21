@@ -7,7 +7,7 @@ export interface IGoal {
   goalId: string
   goalAchieved: boolean
   tasks: ITask[]
-  imgUrl: string
+  imgUrl?: string
   completionDate?: Date;
   tags: string[];
 }
